@@ -1,6 +1,7 @@
 "use strict";
 
 const express = require(`express`);
+const sequelize = require(`../lib/sequelize`);
 const {getLogger} = require(`../lib/logger`);
 const routes = require(`../api`);
 const apiLogger = require(`../middlewares/api-logger`);
@@ -22,16 +23,27 @@ app.use(apiErorr);
 
 module.exports = {
   name: `--server`,
-  run(args) {
+  async run(args) {
     const [customPort] = args;
     const port = Number.parseInt(customPort, 10) || DEFAULT_PORT;
+
+    try {
+      logger.info(`Trying to connect to database...`);
+      await sequelize.authenticate();
+    } catch (err) {
+      logger.error(`An error occurred: ${err.message}`);
+      process.exit(1);
+    }
+    logger.info(`Connection to database established`);
 
     app
       .listen(port, () => {
         return logger.info(`Listening to connections on ${port}`);
       })
       .on(`error`, (err) => {
-        return logger.error(`An error occurred on server creation: ${err.message}`);
+        return logger.error(
+            `An error occurred on server creation: ${err.message}`
+        );
       });
   },
 };
