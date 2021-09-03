@@ -11,7 +11,8 @@
     "start::debug": "cross-env NODE_ENV=development node -r dotenv/config ./src/service/service.js --server",
     "dev": "cross-env NODE_ENV=development nodemon -r dotenv/config ./src/service/service.js --server",
     "start-front-server": "node ./src/express/index.js",
-    "dev-front-server": "nodemon ./src/express/index.js"
+    "dev-front-server": "nodemon ./src/express/index.js",
+    "filldb": "cross-env NODE_ENV=development node -r dotenv/config ./src/service/service.js --filldb 10"
   },
   "repository": {
     "type": "git",
