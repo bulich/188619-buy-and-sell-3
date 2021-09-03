@@ -8,21 +8,21 @@ const commentExist = require(`../middlewares/comment-exist`);
 const commentValidator = require(`../middlewares/comment-validator`);
 
 
-module.exports = (app, service) => {
+module.exports = (app, offerService, commentService) => {
   const route = new Router();
 
   app.use(`/offers`, route);
 
-  route.get(`/`, (req, res) => {
-    const offers = service.findAll();
+  route.get(`/`, async (req, res) => {
+    const offers = await offerService.findAll();
 
     return res.status(HttpCode.OK)
       .json(offers);
   });
 
-  route.get(`/:offerId`, (req, res) => {
+  route.get(`/:offerId`, async (req, res) => {
     const {offerId} = req.params;
-    const offer = service.findOne(offerId);
+    const offer = await offerService.findOne(offerId);
 
     if (!offer) {
       return res.status(HttpCode.NOT_FOUND)
@@ -33,45 +33,45 @@ module.exports = (app, service) => {
       .json(offer);
   });
 
-  route.post(`/`, offerValidator, (req, res) => {
-    const offer = service.create(req.body);
+  route.post(`/`, offerValidator, async (req, res) => {
+    const offer = await offerService.create(req.body);
 
     return res.status(HttpCode.CREATED)
       .json(offer);
   });
 
-  route.put(`/:offerId`, [offerExist(service), offerValidator], (req, res) => {
+  route.put(`/:offerId`, [offerExist(offerService), offerValidator], async (req, res) => {
     const {offerId} = req.params;
-    const offer = service.update(offerId, req.body);
+    const offer = await offerService.update(offerId, req.body);
 
     return res.status(HttpCode.OK)
       .json(offer);
   });
 
-  route.delete(`/:offerId`, offerExist(service), (req, res) => {
+  route.delete(`/:offerId`, offerExist(offerService), async (req, res) => {
     const {offerId} = req.params;
-    const offer = service.drop(offerId);
+    const offer = await offerService.drop(offerId);
 
     return res.status(HttpCode.OK)
       .json(offer);
   });
 
-  route.get(`/:offerId/comments`, offerExist(service), (req, res) => {
+  route.get(`/:offerId/comments`, offerExist(offerService), async (req, res) => {
     const {offer} = res.locals;
     return res.status(HttpCode.OK)
       .json(offer.comments);
   });
 
-  route.post(`/:offerId/comments`, [offerExist(service), commentValidator], (req, res) => {
+  route.post(`/:offerId/comments`, [offerExist(offerService), commentValidator], async (req, res) => {
     const {offerId} = req.params;
-    const comment = service.createComment(offerId, req.body);
+    const comment = await commentService.create(offerId, req.body);
     return res.status(HttpCode.CREATED)
       .json(comment);
   });
 
-  route.delete(`/:offerId/comments/:commentId`, [offerExist(service), commentExist], (req, res) => {
+  route.delete(`/:offerId/comments/:commentId`, [offerExist(offerService), commentExist], async (req, res) => {
     const {offerId, commentId} = req.params;
-    const comment = service.dropComment(offerId, commentId);
+    const comment = await commentService.drop(offerId, commentId);
 
     return res.status(HttpCode.OK)
       .json(comment);

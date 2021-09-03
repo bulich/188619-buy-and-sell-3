@@ -105,7 +105,6 @@ module.exports = {
     const offers = generateOffers(countOffer, titles, categoryModels, sentences, comments);
 
     const offerPromises = offers.map(async (offer) => {
-      console.log(offer)
       const offerModel = await Offer.create(offer, {include: [Aliase.COMMENTS]});
       await offerModel.addCategories(offer.categories);
     });
