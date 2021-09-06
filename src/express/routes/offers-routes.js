@@ -4,11 +4,13 @@ const {Router} = require(`express`);
 const offersRouter = new Router();
 const api = require(`../api`).getAPI();
 const upload = require(`../middlewares/upload`);
-const {ensureArray} = require(`../../utils`);
 
 offersRouter.get(`/category/:id`, (req, res) => res.render(`category`));
 
-offersRouter.get(`/add`, (req, res) => res.render(`ticket/new-ticket`));
+offersRouter.get(`/add`, async (req, res) => {
+  const categories = await api.getCategories();
+  res.render(`ticket/new-ticket`, {categories});
+});
 
 offersRouter.post(`/add`, upload.single(`avatar`), async (req, res) => {
   const {body, file} = req;
@@ -19,7 +21,7 @@ offersRouter.post(`/add`, upload.single(`avatar`), async (req, res) => {
     type: body.action,
     description: body.comment,
     title: body[`ticket-name`],
-    category: ensureArray(body.category),
+    category: body.category,
   };
 
   try {

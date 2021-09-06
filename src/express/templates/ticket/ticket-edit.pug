@@ -29,8 +29,8 @@ block content
                   span Обязательное поле
               .ticket-form__row
                 select#category-field.form__select.js-multiple-select(name='category' data-label='Выбрать категорию публикации' multiple)
-                  each category, index in categories
-                    option(value=index selected=offer.category.includes(category)) #{category}
+                  each category in categories
+                    option(value=category.id) #{category.name}
               .ticket-form__row
                 .form__field.form__field--price
                   input#price-field.js-field.js-price(type='number' name='price' min='1' value=offer.sum required)
