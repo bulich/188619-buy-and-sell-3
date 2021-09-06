@@ -33,6 +33,12 @@ offersRouter.post(`/add`, upload.single(`avatar`), async (req, res) => {
   }
 });
 
+offersRouter.get(`/:id`, async (req, res) => {
+  const {id} = req.params;
+  const offer = await api.getOffer(id, {comments: true});
+  res.render(`ticket/ticket`, {offer});
+});
+
 offersRouter.get(`/edit/:id`, async (req, res) => {
   const {id} = req.params;
   const [offer, categories] = await Promise.all([
@@ -41,7 +47,5 @@ offersRouter.get(`/edit/:id`, async (req, res) => {
   ]);
   res.render(`ticket/ticket-edit`, {offer, categories});
 });
-
-offersRouter.get(`/:id`, (req, res) => res.render(`ticket/ticket`));
 
 module.exports = offersRouter;

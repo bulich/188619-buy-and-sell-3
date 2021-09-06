@@ -5,11 +5,21 @@ const mainRouter = new Router();
 const api = require(`../api`).getAPI();
 
 mainRouter.get(`/`, async (req, res) => {
-  const offers = await api.getOffers();
-  res.render(`main`, {offers});
+  const [
+    offers,
+    categories
+  ] = await Promise.all([
+    api.getOffers(),
+    api.getCategories({count: true})
+  ]);
+
+  res.render(`main`, {offers, categories});
 });
+
 mainRouter.get(`/register`, (req, res) => res.render(`sign-up`));
+
 mainRouter.get(`/login`, (req, res) => res.render(`login`));
+
 mainRouter.get(`/search`, async (req, res) => {
   try {
     const {query} = req.query;
@@ -22,7 +32,9 @@ mainRouter.get(`/search`, async (req, res) => {
     });
   }
 });
+
 mainRouter.get(`/404`, (req, res) => res.render(`errors/404`));
+
 mainRouter.get(`/500`, (req, res) => res.render(`errors/500`));
 
 module.exports = mainRouter;

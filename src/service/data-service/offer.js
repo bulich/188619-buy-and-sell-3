@@ -22,8 +22,17 @@ class OfferService {
     return !!deletedRows;
   }
 
-  findOne(id) {
-    return this._Offer.findByPk(id, {include: [Aliase.CATEGORIES]});
+  findOne(id, needComments) {
+    const include = [
+      Aliase.CATEGORIES
+    ];
+    if (needComments) {
+      include.push({
+        model: this._Comment,
+        as: Aliase.COMMENTS
+      });
+    }
+    return this._Offer.findByPk(id, {include});
   }
 
   async update(id, offer) {

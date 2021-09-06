@@ -1,2 +1,11 @@
 mixin ticketLabel(type)
   span(class!=attributes.class || `ticket-card__label`) #{type === `offer` ? `Куплю` : `Продам`}
+
+-
+  const getRandomInt = (max) => Math.ceil(Math.random()*max);
+
+mixin categoryImage(category)
+  -
+    const idPadded = `0${getRandomInt(6)}`
+
+  img(src=`/img/cat${idPadded}.jpg` srcset=`/img/cat${idPadded}@2x.jpg 2x` alt=category.name)
